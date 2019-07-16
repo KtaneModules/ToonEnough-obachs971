@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using KModkit;
+using UnityEngine;
 
-public class toonEnoughScript : MonoBehaviour {
+public class toonEnoughScript : MonoBehaviour
+{
 
     public KMAudio Audio;
     public KMBombInfo Bomb;
@@ -18,7 +16,6 @@ public class toonEnoughScript : MonoBehaviour {
     private Texture toon;
     private Texture cog;
     private String[] toonDetails;
-    private String cogActivity;
     public Renderer toonScreen;
     public Renderer cogScreen;
     private String[] phrases =
@@ -75,7 +72,7 @@ public class toonEnoughScript : MonoBehaviour {
         {2, 3, 4, 5, 10, 15, 20}
     };
     private int laff;
-    private int answer;
+    private bool answer;
     void Awake()
     {
         moduleId = moduleIdCounter++;
@@ -83,8 +80,8 @@ public class toonEnoughScript : MonoBehaviour {
         noButton.OnInteract += delegate () { NoButton(); return false; };
         toonPic.OnInteract += delegate () { toonButton(); return false; };
     }
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         phrase = phrases[UnityEngine.Random.Range(0, phrases.Length)];
         phraseType = 0;
@@ -93,13 +90,13 @@ public class toonEnoughScript : MonoBehaviour {
         //toon = toons[25];
         toonScreen.GetComponent<Renderer>().material.mainTexture = toon;
         toonDetails = toon.name.Split('_');
-        Debug.Log("Species: " + toonDetails[1] + "\nColor: " + toonDetails[0] + "\nGender:  " + toonDetails[2]);
+        Debug.LogFormat("[Toon Enough #{0}] Species: {0}, Color: {1}, Gender: {2}", moduleId, toonDetails[1], toonDetails[0], toonDetails[2]);
         getLaff();
         getCog();
         cogScreen.GetComponent<Renderer>().material.mainTexture = cog;
-        Debug.Log("Cog Challenge: " + cog.name.Replace("_", " "));
+        Debug.LogFormat("[Toon Enough #{0}] Cog Challenge: {1}", moduleId, cog.name.Replace("_", " "));
 
-        Debug.Log("Laff: " + laff);
+        Debug.LogFormat("[Toon Enough #{0}] Laff: {1}", moduleId, laff);
 
         String[] gags = getGags();
         String[] gagsCarry;
@@ -113,29 +110,19 @@ public class toonEnoughScript : MonoBehaviour {
             gagsCarry = new String[3];
         else
             gagsCarry = new String[2];
-        for(int aa = 0; aa < gagsCarry.Length; aa++)
+        for (int aa = 0; aa < gagsCarry.Length; aa++)
         {
             gagsCarry[aa] = gags[aa];
         }
 
         int[] gagLevels = getGagLevels(gagsCarry);
-       
+
         int toonScore = getToonScore(gagsCarry, gagLevels);
         int cogScore = getCogScore();
-        Debug.Log("Final Toon Score: " + toonScore);
-        Debug.Log("Cog Challenge Score: " + cogScore);
-        if (toonScore >= cogScore)
-        {
-            answer = 1;
-            Debug.Log("Answer should be YES");
-        }
-            
-        else
-        {
-            answer = 0;
-            Debug.Log("Answer should be NO");
-        }
-           
+        Debug.LogFormat("[Toon Enough #{0}] Final Toon Score: {1}", moduleId, toonScore);
+        Debug.LogFormat("[Toon Enough #{0}] Cog Challenge Score: {2}", moduleId, cogScore);
+        answer = toonScore >= cogScore;
+        Debug.LogFormat("[Toon Enough #{0}] Answer should be {1}", moduleId, answer ? "YES" : "NO");
     }
     void getLaff()
     {
@@ -239,13 +226,13 @@ public class toonEnoughScript : MonoBehaviour {
         if (toonDetails[1].EqualsIgnoreCase("dog") || toonDetails[1].EqualsIgnoreCase("rabbit") || toonDetails[1].EqualsIgnoreCase("horse") || toonDetails[1].EqualsIgnoreCase("monkey") || toonDetails[1].EqualsIgnoreCase("mouse") || toonDetails[1].EqualsIgnoreCase("bear"))
         {
             gags[2] = "Toon-up";
-            if(toonDetails[0].EqualsIgnoreCase("brown") || toonDetails[0].EqualsIgnoreCase("purple") || toonDetails[0].EqualsIgnoreCase("yellow") || toonDetails[0].EqualsIgnoreCase("green"))
+            if (toonDetails[0].EqualsIgnoreCase("brown") || toonDetails[0].EqualsIgnoreCase("purple") || toonDetails[0].EqualsIgnoreCase("yellow") || toonDetails[0].EqualsIgnoreCase("green"))
             {
                 gags[3] = "Drop";
-                if(toonDetails[2].EqualsIgnoreCase("male"))
+                if (toonDetails[2].EqualsIgnoreCase("male"))
                 {
                     gags[4] = "Sound";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Trap";
                     }
@@ -257,7 +244,7 @@ public class toonEnoughScript : MonoBehaviour {
                 else
                 {
                     gags[4] = "Trap";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Lure";
                     }
@@ -270,10 +257,10 @@ public class toonEnoughScript : MonoBehaviour {
             else
             {
                 gags[3] = "Lure";
-                if(toonDetails[2].EqualsIgnoreCase("male"))
+                if (toonDetails[2].EqualsIgnoreCase("male"))
                 {
                     gags[4] = "Sound";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Drop";
                     }
@@ -285,7 +272,7 @@ public class toonEnoughScript : MonoBehaviour {
                 else
                 {
                     gags[4] = "Trap";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Drop";
                     }
@@ -302,10 +289,10 @@ public class toonEnoughScript : MonoBehaviour {
             if (toonDetails[0].EqualsIgnoreCase("brown") || toonDetails[0].EqualsIgnoreCase("purple") || toonDetails[0].EqualsIgnoreCase("yellow") || toonDetails[0].EqualsIgnoreCase("green"))
             {
                 gags[3] = "Drop";
-                if(toonDetails[2].EqualsIgnoreCase("male"))
+                if (toonDetails[2].EqualsIgnoreCase("male"))
                 {
                     gags[4] = "Toon-up";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Trap";
                     }
@@ -317,7 +304,7 @@ public class toonEnoughScript : MonoBehaviour {
                 else
                 {
                     gags[4] = "Trap";
-                    if(laff > 97)
+                    if (laff > 97)
                     {
                         gags[5] = "Lure";
                     }
@@ -363,7 +350,7 @@ public class toonEnoughScript : MonoBehaviour {
         String sn = Bomb.GetSerialNumber();
         int[] gl = new int[gc.Length];
         int num = laff;
-        while(num > 9)
+        while (num > 9)
         {
             String c = num + "";
             num = 0;
@@ -374,18 +361,18 @@ public class toonEnoughScript : MonoBehaviour {
         }
         num += (sn[sn.Length - 1] - '0');
         gl[0] = (num % 7) + 1;
-        Debug.Log("Throw Level: ((" + sn[sn.Length - 1] + " + DR(" + laff + ")) % 7) + 1 = " + gl[0]);
+        Debug.LogFormat("[Toon Enough #{0}] Throw Level: (({1} + DR({2})) % 7) + 1 = {3}", moduleId, sn[sn.Length - 1], laff, gl[0]);
         if (gl[0] < 5 && laff >= 52)
         {
-            Debug.Log("Throw level is below 5 and laff is 52 or greater, setting Throw level to 5.");
+            Debug.LogFormat("[Toon Enough #{0}] Throw level is below 5 and laff is 52 or greater, setting Throw level to 5.", moduleId);
             gl[0] = 5;
         }
-            
+
         sn = sn.Substring(0, 5);
         int cur = 2;
-        for(int aa = 1; aa >= 0; aa--)
+        for (int aa = 1; aa >= 0; aa--)
         {
-            switch(sn[aa])
+            switch (sn[aa])
             {
                 case '0':
                 case '1':
@@ -398,11 +385,11 @@ public class toonEnoughScript : MonoBehaviour {
                 case '8':
                 case '9':
                     cur = aa;
-                    break;          
+                    break;
             }
         }
         gl[1] = (((sn[cur] - '0') + (laff % 10)) % 7) + 1;
-        Debug.Log("Squirt Level: ((" + sn[cur] + " + (" + laff + " % 10)) % 7) + 1 = " + gl[1]);
+        Debug.LogFormat("[Toon Enough #{0}] Squirt Level: (({1} + ({2} % 10)) % 7) + 1 = {3}", moduleId, sn[cur], laff, gl[1]);
         sn = sn.Substring(0, cur) + "" + sn.Substring(cur + 1);
         for (int bb = 2; bb < gl.Length; bb++)
         {
@@ -500,7 +487,7 @@ public class toonEnoughScript : MonoBehaviour {
                     break;
             }
             gl[bb] = (num % 7) + 1;
-            Debug.Log(gc[bb] + " Level : (" + num + " % 7) + 1 = " + gl[bb]);
+            Debug.LogFormat("[Toon Enough #{0}] {1} Level: ({2} % 7) + 1 = {3}", moduleId, gc[bb], num, gl[bb]);
         }
         return gl;
     }
@@ -508,10 +495,10 @@ public class toonEnoughScript : MonoBehaviour {
     {
         int ts = 0;
         String scoreOutput = "Final Toon Score: ";
-        for(int aa = 0; aa < gc.Length; aa++)
+        for (int aa = 0; aa < gc.Length; aa++)
         {
             int row = -1;
-            switch(gc[aa])
+            switch (gc[aa])
             {
                 case "Toon-up":
                     row = 0;
@@ -541,12 +528,12 @@ public class toonEnoughScript : MonoBehaviour {
         ts += (laff / 10);
         scoreOutput = scoreOutput + "" + (laff / 10) + " + ";
         bool uber = false;
-        if(gc.Length == 2)
+        if (gc.Length == 2)
         {
             if ((gl[0] >= 6 && gl[1] >= 4) || (gl[1] >= 6 && gl[0] >= 4))
                 uber = true;
         }
-        else if(gc.Length == 3)
+        else if (gc.Length == 3)
         {
             int num6 = 0;
             for (int dd = 0; dd < 3; dd++)
@@ -557,7 +544,7 @@ public class toonEnoughScript : MonoBehaviour {
             if (num6 > 1)
                 uber = true;
         }
-        else if(gc.Length == 4)
+        else if (gc.Length == 4)
         {
             int num6 = 0;
             int num5 = 0;
@@ -575,24 +562,24 @@ public class toonEnoughScript : MonoBehaviour {
         }
         if (uber)
         {
-            Debug.Log("Is an uber!");
+            Debug.LogFormat("[Toon Enough #{0}] Is an uber!", moduleId);
             ts += 25;
             scoreOutput = scoreOutput + "25 + ";
         }
-            
+
         if (cog.name.ContainsIgnoreCase("Building") && Bomb.GetBatteryCount() >= 3)
         {
-            Debug.Log("Toon is doing a building invasion!");
+            Debug.LogFormat("[Toon Enough #{0}] Toon is doing a building invasion!", moduleId);
             scoreOutput = scoreOutput + "20 + ";
             ts += 20;
         }
         scoreOutput = scoreOutput.Substring(0, scoreOutput.Length - 2);
-        Debug.Log(scoreOutput + "= " + ts);
+        Debug.LogFormat("[Toon Enough #{0}] {1} = {2}", moduleId, scoreOutput, ts);
         return ts;
     }
     int getCogScore()
     {
-        switch(cog.name)
+        switch (cog.name)
         {
             case "1_Story_Building":
                 return 58;
@@ -640,11 +627,11 @@ public class toonEnoughScript : MonoBehaviour {
     }
     void YesButton()
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             yesButton.AddInteractionPunch();
             GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
-            if (answer == 1)
+            if (answer)
             {
                 Audio.PlaySoundAtTransform("solved", transform);
                 String[] toonSayings = { "OMG, YAY! I thought so but\nI wasn't sure! Thank you!", "OOOO! THAT'S WHAT\nI'M TALKING ABOUT!!!" };
@@ -659,15 +646,15 @@ public class toonEnoughScript : MonoBehaviour {
                 Start();
             }
         }
-       
+
     }
     void NoButton()
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             noButton.AddInteractionPunch();
             GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
-            if (answer == 0)
+            if (!answer)
             {
                 Audio.PlaySoundAtTransform("solved", transform);
                 String[] toonSayings = { "Aww man! I guess I'll have to\nwork harder.. *sigh*", "Really? You're kidding.. Alright.\nThanks anyways!" };
@@ -685,7 +672,7 @@ public class toonEnoughScript : MonoBehaviour {
     }
     void toonButton()
     {
-        if(!moduleSolved)
+        if (!moduleSolved)
         {
             toonPic.AddInteractionPunch();
             Audio.PlaySoundAtTransform(toonDetails[1] + "Voice", transform);
@@ -701,7 +688,7 @@ public class toonEnoughScript : MonoBehaviour {
                 phraseType = 0;
             }
         }
-        else if(phraseType < 2)
+        else if (phraseType < 2)
         {
             toonPic.AddInteractionPunch();
             Audio.PlaySoundAtTransform(toonDetails[1] + "Voice", transform);
@@ -710,7 +697,7 @@ public class toonEnoughScript : MonoBehaviour {
         }
     }
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} yes/no [Presses the yes or no button]. !{0} toon [Toggles colorblind mode].";
+    private readonly string TwitchHelpMessage = @"!{0} yes/no [presses the yes or no button] | !{0} toon [toggles colorblind mode]";
 #pragma warning restore 414
     public KMSelectable[] ProcessTwitchCommand(string command)
     {
