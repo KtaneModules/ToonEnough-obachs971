@@ -120,7 +120,7 @@ public class toonEnoughScript : MonoBehaviour
         int toonScore = getToonScore(gagsCarry, gagLevels);
         int cogScore = getCogScore();
         Debug.LogFormat("[Toon Enough #{0}] Final Toon Score: {1}", moduleId, toonScore);
-        Debug.LogFormat("[Toon Enough #{0}] Cog Challenge Score: {2}", moduleId, cogScore);
+        Debug.LogFormat("[Toon Enough #{0}] Cog Challenge Score: {1}", moduleId, cogScore);
         answer = toonScore >= cogScore;
         Debug.LogFormat("[Toon Enough #{0}] Answer should be {1}", moduleId, answer ? "YES" : "NO");
     }
