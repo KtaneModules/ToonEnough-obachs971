@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using KModkit;
 using UnityEngine;
 
 public class toonEnoughScript : MonoBehaviour
 {
-
     public KMAudio Audio;
     public KMBombInfo Bomb;
     public KMBombModule Module;
@@ -13,55 +13,48 @@ public class toonEnoughScript : MonoBehaviour
     public KMSelectable toonPic;
     public Texture[] toons;
     public Texture[] cogs;
-    private Texture toon;
-    private Texture cog;
-    private String[] toonDetails;
     public Renderer toonScreen;
     public Renderer cogScreen;
-    private String[] phrases =
-        {
-            "What goes 'Ha Ha Ha Thud'?\nSomeone laughing his head off.",
-            "What goes TICK-TOCK-WOOF?\nA watchdog!",
-            "Why do male deer need braces?\nBecause they have 'buck teeth'!",
-            "What has 1 horn and gives milk?\nA milk truck!",
-            "When is the vet busiest?\nWhen it's raining cats and dogs.",
-            "What's the best parting gift?\nA comb.",
-            "Why did the man hit the clock?\nBecause the clock struck first.",
-            "What goes dot-dash-squeak?\nMouse code.",
-            "How do trains hear?\nThrough their engineers.",
-            "What has six eyes but cannot see?\nThree blind mice.",
-            "Keep your eyes on the doughnut,\nnot the hole.",
-            "What works only when it's fired?\nA ROCKET.",
-            "What goes Oh, Oh, Oh?\nSanta walking backwards!",
-            "What do mermaids have on toast?\nMermarlade.",
-            "My friend thinks he's a rubber\nband. I told him to snap out of it.",
-            "How does a sick sheep feel?\nBaah-aahd.",
-            "Why did the dog chase his tail?\nTo make ends meet.",
-            "What goes zzub-zzub?\nA bee flying backward.\n",
-            "How do you clean a tuba?\nWith a tuba toothpaste.",
-            "What do frogs like to sit on?\nToadstools.",
-            "What's a polygon?\nA dead parrot.",
-            "What's a funny egg called?\nA practical yolker."
-        };
     public TextMesh chat;
-    private String phrase;
-    private int phraseType;
-    //Logging
-    static int moduleIdCounter = 1;
-    int moduleId;
-    private bool moduleSolved;
 
-    private int[,] laffChart = new int[,] {
-            {76, 124, 79, 107, 113, 127, 26, 75, 61, 77, 43},
-            {92, 21, 125, 28, 71, 119, 82, 85, 101, 16, 69},
-            {23, 44, 100, 87, 136, 105, 49, 68, 81, 89, 118},
-            {56, 41, 39, 51, 37, 114, 65, 58, 18, 47, 93},
-            {133, 31, 104, 73, 67, 134, 98, 34, 122, 62, 40},
-            {115, 106, 128, 130, 112, 45, 63, 129, 123, 22, 57},
-            {27, 48, 99, 91, 90, 55, 60, 80, 19, 116, 36},
-            {15, 95, 86, 88, 72, 24, 102, 59, 53, 94, 135},
-        };
-    private int[,] gagChart = new int[,]
+    private static readonly string[] phrases =
+    {
+        "What goes 'Ha Ha Ha Thud'?\nSomeone laughing his head off.",
+        "What goes TICK-TOCK-WOOF?\nA watchdog!",
+        "Why do male deer need braces?\nBecause they have 'buck teeth'!",
+        "What has 1 horn and gives milk?\nA milk truck!",
+        "When is the vet busiest?\nWhen it's raining cats and dogs.",
+        "What's the best parting gift?\nA comb.",
+        "Why did the man hit the clock?\nBecause the clock struck first.",
+        "What goes dot-dash-squeak?\nMouse code.",
+        "How do trains hear?\nThrough their engineers.",
+        "What has six eyes but cannot see?\nThree blind mice.",
+        "Keep your eyes on the doughnut,\nnot the hole.",
+        "What works only when it's fired?\nA ROCKET.",
+        "What goes Oh, Oh, Oh?\nSanta walking backwards!",
+        "What do mermaids have on toast?\nMermarlade.",
+        "My friend thinks he's a rubber\nband. I told him to snap out of it.",
+        "How does a sick sheep feel?\nBaah-aahd.",
+        "Why did the dog chase his tail?\nTo make ends meet.",
+        "What goes zzub-zzub?\nA bee flying backward.\n",
+        "How do you clean a tuba?\nWith a tuba toothpaste.",
+        "What do frogs like to sit on?\nToadstools.",
+        "What's a polygon?\nA dead parrot.",
+        "What's a funny egg called?\nA practical yolker."
+    };
+
+    private static readonly int[,] laffChart = new int[,]
+    {
+        {76, 124, 79, 107, 113, 127, 26, 75, 61, 77, 43},
+        {92, 21, 125, 28, 71, 119, 82, 85, 101, 16, 69},
+        {23, 44, 100, 87, 136, 105, 49, 68, 81, 89, 118},
+        {56, 41, 39, 51, 37, 114, 65, 58, 18, 47, 93},
+        {133, 31, 104, 73, 67, 134, 98, 34, 122, 62, 40},
+        {115, 106, 128, 130, 112, 45, 63, 129, 123, 22, 57},
+        {27, 48, 99, 91, 90, 55, 60, 80, 19, 116, 36},
+        {15, 95, 86, 88, 72, 24, 102, 59, 53, 94, 135},
+    };
+    private static readonly int[,] gagChart = new int[,]
     {
         {1, 1, 2, 3, 5, 8, 13},
         {2, 3, 4, 5, 10, 15, 20},
@@ -71,8 +64,45 @@ public class toonEnoughScript : MonoBehaviour
         {1, 3, 5, 9, 15, 21, 29},
         {2, 3, 4, 5, 10, 15, 20}
     };
+
+    private static readonly Dictionary<string, float> aspectRatios = new Dictionary<string, float>
+    {
+        { "1_Story_Building", 1.56640625f },
+        { "2_Story_Building", 1.72189349112426f },
+        { "3_Story_Building", 1.83196721311475f },
+        { "4_Story_Building", 1.60498220640569f },
+        { "5_Story_Building", 1.74545454545455f },
+        { "The_Back_Nine", 2.14420062695925f },
+        { "The_Cashbot_Bullion_Mint", 1.3648393194707f },
+        { "The_Cashbot_Coin_Mint", 1.12008733624454f },
+        { "The_Cashbot_Dollar_Mint", 1.28571428571429f },
+        { "The_CEO", 1.07267441860465f },
+        { "The_CFO", 1.02409638554217f },
+        { "The_CJ", 1.27727272727273f },
+        { "The_Front_Three", 2.27358490566038f },
+        { "The_Lawbot_A_Office", 0.951977401129944f },
+        { "The_Lawbot_B_Office", 0.937142857142857f },
+        { "The_Lawbot_C_Office", 0.946608946608947f },
+        { "The_Lawbot_D_Office", 1f },
+        { "The_Middle_Six", 2.26100628930818f },
+        { "The_Sellbot_Factory", 3.04347826086957f },
+        { "The_VP", 1.29365079365079f }
+    };
+
+    private Texture toon;
+    private Texture cog;
+    private string[] toonDetails;
+
+    private string phrase;
+    private int phraseType;
+    //Logging
+    static int moduleIdCounter = 1;
+    int moduleId;
+    private bool moduleSolved;
+
     private int laff;
     private bool answer;
+
     void Awake()
     {
         moduleId = moduleIdCounter++;
@@ -87,29 +117,32 @@ public class toonEnoughScript : MonoBehaviour
         phraseType = 0;
         chat.text = phrase;
         toon = toons[UnityEngine.Random.Range(0, toons.Length)];
-        //toon = toons[25];
-        toonScreen.GetComponent<Renderer>().material.mainTexture = toon;
+        toonScreen.material.mainTexture = toon;
         toonDetails = toon.name.Split('_');
         Debug.LogFormat("[Toon Enough #{0}] Species: {0}, Color: {1}, Gender: {2}", moduleId, toonDetails[1], toonDetails[0], toonDetails[2]);
         getLaff();
         getCog();
-        cogScreen.GetComponent<Renderer>().material.mainTexture = cog;
         Debug.LogFormat("[Toon Enough #{0}] Cog Challenge: {1}", moduleId, cog.name.Replace("_", " "));
+        cogScreen.GetComponent<Renderer>().material.mainTexture = cog;
+        if (0.059f * aspectRatios[cog.name] > .113f)
+            cogScreen.transform.localScale = new Vector3(.113f, 0, .113f / aspectRatios[cog.name]);
+        else
+            cogScreen.transform.localScale = new Vector3(0.059f * aspectRatios[cog.name], 0, 0.059f);
 
         Debug.LogFormat("[Toon Enough #{0}] Laff: {1}", moduleId, laff);
 
-        String[] gags = getGags();
-        String[] gagsCarry;
+        string[] gags = getGags();
+        string[] gagsCarry;
         if (laff >= 61)
-            gagsCarry = new String[6];
+            gagsCarry = new string[6];
         else if (laff >= 52)
-            gagsCarry = new String[5];
+            gagsCarry = new string[5];
         else if (laff >= 34)
-            gagsCarry = new String[4];
+            gagsCarry = new string[4];
         else if (laff >= 25)
-            gagsCarry = new String[3];
+            gagsCarry = new string[3];
         else
-            gagsCarry = new String[2];
+            gagsCarry = new string[2];
         for (int aa = 0; aa < gagsCarry.Length; aa++)
         {
             gagsCarry[aa] = gags[aa];
@@ -124,6 +157,7 @@ public class toonEnoughScript : MonoBehaviour
         answer = toonScore >= cogScore;
         Debug.LogFormat("[Toon Enough #{0}] Answer should be {1}", moduleId, answer ? "YES" : "NO");
     }
+
     void getLaff()
     {
         int col = -1;
@@ -218,9 +252,9 @@ public class toonEnoughScript : MonoBehaviour
         else
             cog = cogs[UnityEngine.Random.Range(0, 7)];
     }
-    String[] getGags()
+    string[] getGags()
     {
-        String[] gags = new String[6];
+        string[] gags = new string[6];
         gags[0] = "Throw";
         gags[1] = "Squirt";
         if (toonDetails[1].EqualsIgnoreCase("dog") || toonDetails[1].EqualsIgnoreCase("rabbit") || toonDetails[1].EqualsIgnoreCase("horse") || toonDetails[1].EqualsIgnoreCase("monkey") || toonDetails[1].EqualsIgnoreCase("mouse") || toonDetails[1].EqualsIgnoreCase("bear"))
@@ -345,7 +379,7 @@ public class toonEnoughScript : MonoBehaviour
         }
         return gags;
     }
-    int[] getGagLevels(String[] gc)
+    int[] getGagLevels(string[] gc)
     {
         String sn = Bomb.GetSerialNumber();
         int[] gl = new int[gc.Length];
@@ -491,7 +525,7 @@ public class toonEnoughScript : MonoBehaviour
         }
         return gl;
     }
-    int getToonScore(String[] gc, int[] gl)
+    int getToonScore(string[] gc, int[] gl)
     {
         int ts = 0;
         String scoreOutput = "Final Toon Score: ";
@@ -634,7 +668,7 @@ public class toonEnoughScript : MonoBehaviour
             if (answer)
             {
                 Audio.PlaySoundAtTransform("solved", transform);
-                String[] toonSayings = { "OMG, YAY! I thought so but\nI wasn't sure! Thank you!", "OOOO! THAT'S WHAT\nI'M TALKING ABOUT!!!" };
+                string[] toonSayings = { "OMG, YAY! I thought so but\nI wasn't sure! Thank you!", "OOOO! THAT'S WHAT\nI'M TALKING ABOUT!!!" };
                 chat.text = toonSayings[UnityEngine.Random.Range(0, 2)];
                 Module.HandlePass();
                 moduleSolved = true;
@@ -657,7 +691,7 @@ public class toonEnoughScript : MonoBehaviour
             if (!answer)
             {
                 Audio.PlaySoundAtTransform("solved", transform);
-                String[] toonSayings = { "Aww man! I guess I'll have to\nwork harder.. *sigh*", "Really? You're kidding.. Alright.\nThanks anyways!" };
+                string[] toonSayings = { "Aww man! I guess I'll have to\nwork harder.. *sigh*", "Really? You're kidding.. Alright.\nThanks anyways!" };
                 chat.text = toonSayings[UnityEngine.Random.Range(0, 2)];
                 Module.HandlePass();
                 moduleSolved = true;
@@ -670,6 +704,7 @@ public class toonEnoughScript : MonoBehaviour
             }
         }
     }
+
     void toonButton()
     {
         if (!moduleSolved)
