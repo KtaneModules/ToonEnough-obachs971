@@ -119,7 +119,7 @@ public class toonEnoughScript : MonoBehaviour
         toon = toons[UnityEngine.Random.Range(0, toons.Length)];
         toonScreen.material.mainTexture = toon;
         toonDetails = toon.name.Split('_');
-        Debug.LogFormat("[Toon Enough #{0}] Species: {0}, Color: {1}, Gender: {2}", moduleId, toonDetails[1], toonDetails[0], toonDetails[2]);
+        Debug.LogFormat("[Toon Enough #{0}] Species: {1}, Color: {2}, Gender: {3}", moduleId, toonDetails[1], toonDetails[0], toonDetails[2]);
         getLaff();
         getCog();
         Debug.LogFormat("[Toon Enough #{0}] Cog Challenge: {1}", moduleId, cog.name.Replace("_", " "));
