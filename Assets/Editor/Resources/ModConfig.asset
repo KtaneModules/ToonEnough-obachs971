@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
+  m_Name: ModConfig
+  m_EditorClassIdentifier: 
+  id: toonEnough
+  title: Toon Enough
+  author: Prissy & Sean
+  description: "Are you toon enough?\n\nThanks to Royal_Flush, Timwi, EpicToast, and
+    the rest of the modders helping me to create my first module. \r\n\r\nSpecial
+    thanks to my Fiance, Prissy who was the idea creator of this mod, and did the
+    graphic designing for it.\r\n\r\nAfter learning how to mod, I now have a understanding
+    of what modders go through. I have a deep appreciation for them for the free content
+    they make and the new ideas they come up with. It surely taken me a week to finally
+    get this done and that was only 1 module using simple mechanics.\r\n\r\ngithub:
+    https://github.com/obachs971/ToonEnough\r"
+  version: 1.0.0
+  outputFolder: build
+  previewImage: {fileID: 2800000, guid: dc079b982ed500a4caf57ff168d34461, type: 3}
